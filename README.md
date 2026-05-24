@@ -10,13 +10,13 @@ El sistema ejecuta un **flujo dual en menos de 1 segundo**: genera y ejecuta la 
 
 ![Interfaz](https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA/blob/main/Assets/Interfaz.png) 
 
-https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA/blob/main/Assets/Power_DAX.png
+![Consulta de ejemplo DAX](https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA/blob/main/Assets/Power_DAX.png)
 
-https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA/blob/main/Assets/Consulta_ejemplo.png
+![Consulta de ejemplo](https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA/blob/main/Assets/Consulta_ejemplo.png)
 
-https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA/blob/main/Assets/Benchmark_velocidad_consulta.png
+![Benchmark de velocidad](https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA/blob/main/Assets/Benchmark_velocidad_consulta.png)
 
-https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA/blob/main/Assets/Archivo_CSV_generado.png
+![CSV Generado](https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA/blob/main/Assets/Archivo_CSV_generado.png)
 
 ---
 
