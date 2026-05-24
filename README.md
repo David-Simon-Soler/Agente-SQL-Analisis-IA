@@ -8,7 +8,7 @@ El sistema ejecuta un **flujo dual en menos de 1 segundo**: genera y ejecuta la 
 
 ## 🖥️ Demo
 
-https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA/blob/main/Assets/Interfaz.png
+![Interfaz](https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA/blob/main/Assets/Interfaz.png) 
 
 https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA/blob/main/Assets/Power_DAX.png
 
