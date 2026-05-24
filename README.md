@@ -8,7 +8,7 @@ El sistema ejecuta un **flujo dual en menos de 1 segundo**: genera y ejecuta la 
 
 ## 🖥️ Demo
 
-![Interfaz principal](assets/Interfaz.png)
+(assets/Interfaz.png)
 
 ![Consulta de ejemplo con DAX](assets/Consulta_ejemplo.png)
 
