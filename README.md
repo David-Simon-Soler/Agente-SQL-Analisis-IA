@@ -1,4 +1,4 @@
-# 🤖 Agente SQL con IA + Consultor Automático Power BI (DAX)
+# Agente SQL con IA + Consultor Automático Power BI (DAX)
 
 Agente conversacional avanzado que permite consultar y analizar datos de un e-commerce real utilizando **lenguaje natural en español**, abstrayendo por completo la complejidad técnica.
 
