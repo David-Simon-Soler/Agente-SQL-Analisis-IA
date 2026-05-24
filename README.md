@@ -1,162 +1,140 @@
-# 🤖 Agente SQL con IA
+# 🤖 Agente SQL con IA + Consultor Automático Power BI (DAX)
 
-Agente conversacional que permite consultar y analizar datos de un ecommerce real usando **lenguaje natural en español**, sin necesidad de saber SQL.
+Agente conversacional avanzado que permite consultar y analizar datos de un e-commerce real utilizando **lenguaje natural en español**, abstrayendo por completo la complejidad técnica. 
 
-El usuario escribe una pregunta, el agente genera la query SQL automáticamente, limpia los datos y devuelve una tabla interactiva, un gráfico y un CSV listo para Power BI, todo en menos de 1 segundo.
+El sistema ejecuta un flujo dual en menos de 1 segundo: genera y ejecuta la query SQL automáticamente sobre una base de datos de más de 100,000 registros, limpia los datos, renderiza visualizaciones interactivas y, **en paralelo, deduce y escribe las fórmulas DAX nativas** y la maquetación visual necesarias para replicar el informe de manera inmediata en **Power BI**.
 
 ---
 
-## 🖥️ Demo
+## 🖥️ Demo e Interfaz
 
 ![Interfaz principal](assets/Interfaz.png)
 
 ![Consulta de ejemplo](assets/Consulta_ejemplo.png)
 
+![Módulo DAX y Réplica Power BI](assets/Archivo_CSV_generado.png)
+
 ![Benchmark de velocidad](assets/Benchmark_velocidad_consulta.png)
 
-![CSV generado](assets/Archivo_CSV_generado.png)
+---
+
+## ⚙️ ¿Cómo funciona el flujo unificado?
+
+   Usuario escribe consulta analítica en español
+                        ↓
+         LLM (LLaMA 3.3 70B via Groq API)
+                        ↓
+     ┌──────────────────┴──────────────────┐
+     ▼                                     ▼
+[Pipeline SQL & Python]             [Pipeline Business Intelligence]
+Genera query SQL optimizada         Abstrae la lógica de negocio
+↓                                     ↓
+SQLite ejecuta en >100k filas       Traduce a medidas DAX exactas
+↓                                     ↓
+Pandas limpia tipos y nulos        Recomienda visual nativa Power BI
+↓                                     ↓
+Renderiza tabla y Plotly             Expone bloque listo para copiar
+└──────────────────┬──────────────────┘
+▼
+Dashboard unificado en Streamlit listo para descargar en CSV
+
 
 ---
 
-## ⚙️ ¿Cómo funciona?
+## 🛠️ Tecnologías y Arquitectura
 
-```
-Usuario escribe en español
-        ↓
-   LLM (LLaMA 3.3 70B via Groq API)
-        ↓
-  Genera la query SQL automáticamente
-        ↓
-  SQLite ejecuta la query sobre +100k registros
-        ↓
-  Pandas limpia y transforma los datos
-        ↓
-  Streamlit muestra tabla, gráfico y CSV
-```
-
----
-
-## 🛠️ Tecnologías
-
-| Herramienta | Uso |
-|---|---|
-| Python | Lenguaje principal |
-| Groq API + LLaMA 3.3 70B | Generación de SQL desde lenguaje natural |
-| SQLite | Base de datos local |
-| Pandas | Limpieza y transformación de datos |
-| Plotly | Visualizaciones interactivas |
-| Streamlit | Interfaz web conversacional |
-| python-dotenv | Gestión segura de credenciales |
+| Herramienta | Capa | Uso y Funcionalidad |
+|---|---|---|
+| **Python** | Core | Lenguaje base del ecosistema analítico |
+| **Groq API + LLaMA 3.3 70B** | Inteligencia | Generador de consultas relacionales y motor de traducción a DAX |
+| **SQLite** | Almacenamiento | Motor de base de datos relacional local con datos indexados |
+| **Pandas** | Procesamiento | Pipeline automático de data cleaning (cast de tipos, gestión de nulos) |
+| **Plotly** | Visualización | Gráficos interactivos dinámicos embebidos en el chat |
+| **Streamlit** | Frontend | Interfaz web de usuario responsiva y panel interactivo |
+| **python-dotenv** | Seguridad | Gestión de variables de entorno y protección de credenciales API |
 
 ---
 
 ## 📊 Dataset
 
-[Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+El proyecto utiliza datos reales extraídos del [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce), simulando un entorno empresarial complejo con más de **100,000 registros** interconectados.
 
-| Tabla | Registros |
-|---|---|
-| orders | 99.441 |
-| order_items | 112.650 |
-| order_payments | 103.886 |
-| order_reviews | 99.224 |
-| customers | 99.441 |
-| products | 32.951 |
-| sellers | 3.095 |
-| geolocation | 1.000.163 |
-| category_names | 71 |
+| Tabla | Registros | Descripción de Datos |
+|---|---|---|
+| **orders** | 99.441 | Estado de pedidos y marcas de tiempo (timestamps) |
+| **order_items** | 112.650 | Precios de productos, fletes y relaciones logísticas |
+| **order_payments** | 103.886 | Métodos de pago, cuotas y montos financieros |
+| **order_reviews** | 99.224 | Puntuaciones de satisfacción del cliente y comentarios |
+| **customers** | 99.441 | Ubicación geográfica e identificadores de consumidores |
+| **products** | 32.951 | Dimensiones, pesos y categorización de artículos |
+| **sellers** | 3.095 | Datos operativos de los vendedores en Brasil |
+| **geolocation** | 1.000.163 | Prefijos postales y coordenadas geográficas lat/long |
+| **category_names** | 71 | Diccionario de traducción de categorías (Portugués - Inglés) |
 
 ---
 
-## ⚡ Benchmark de velocidad
+## ⚡ Benchmark de Velocidad del Sistema
 
-Tiempo medio de respuesta sobre +100.000 registros reales:
+Análisis empírico del tiempo de procesamiento medio sobre el dataset de Olist (LLM + motor SQL local):
 
-| Consulta | LLM | SQL | Total |
+| Consulta de Negocio | Fase LLM | Fase SQL | Tiempo Total |
 |---|---|---|---|
-| 5 productos más vendidos | 0.35s | 0.26s | 0.61s |
-| Estado con más clientes | 0.15s | 0.07s | 0.22s |
-| Pedidos entregados vs cancelados | 0.22s | 0.02s | 0.24s |
-| 5 estados con más pedidos | 0.23s | 0.77s | 1.00s |
-| Ticket medio de pedidos | 0.30s | 0.09s | 0.39s |
+| Top 5 productos más vendidos | 0.35s | 0.26s | **0.61s** |
+| Estado con mayor densidad de clientes | 0.15s | 0.07s | **0.22s** |
+| Ratio de pedidos entregados vs cancelados | 0.22s | 0.02s | **0.24s** |
+| Distribución de los 5 estados con más volumen | 0.23s | 0.77s | **1.00s** |
+| Ticket medio transaccionado por pedido | 0.30s | 0.09s | **0.39s** |
 
 ---
 
-## 🚀 Instalación
+## 🚀 Instalación y Despliegue Local
 
 ### 1. Clona el repositorio
 ```bash
-git clone https://github.com/tuusuario/agente-sql-ia.git
-cd agente-sql-ia
-```
-
-### 2. Instala las dependencias
-```bash
+git clone [https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA.git](https://github.com/David-Simon-Soler/Agente-SQL-Analisis-IA.git)
+cd Agente-SQL-Analisis-IA
+2. Instala el entorno de dependencias
+Bash
 pip install -r requirements.txt
-```
+3. Configura tus credenciales seguras
+Crea un archivo .env en la raíz del proyecto para alojar tus credenciales (ignorado automáticamente por Git):
 
-### 3. Configura tu API key
-Crea un archivo `.env` en la raíz del proyecto:
-```
+Fragmento de código
 GROQ_API_KEY=tu_api_key_aqui
-```
-Consigue tu API key gratuita en [console.groq.com](https://console.groq.com)
+Consigue tu API key de alto rendimiento de manera gratuita en console.groq.com
 
-### 4. Descarga el dataset
-Descarga el dataset de [Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) y coloca los CSVs en `Data/raw/`
+4. Preparación de los Datos
+Descarga los archivos estructurados desde Kaggle.
 
-### 5. Carga la base de datos
-```bash
+Ubica los archivos CSV descomprimidos dentro de la ruta Data/raw/.
+
+Compila y migra los datos hacia el motor SQLite relacional ejecutando:
+
+Bash
 python src/load_data.py
-```
+5. Lanzamiento de la Aplicación
+Lanza el servidor de Streamlit para desplegar la interfaz web interactiva en tu navegador local:
 
-### 6. Ejecuta la app
-```bash
+Bash
 streamlit run app.py
-```
-
----
-
-## 💬 Ejemplos de consultas
-
-- ¿Cuáles son las 5 categorías más vendidas?
-- ¿Cuál es el estado con más clientes?
-- ¿Cuántos pedidos fueron entregados vs cancelados?
-- ¿Cuál es el ticket medio de los pedidos?
-- ¿Qué métodos de pago se usan más?
-- ¿Cuál es la puntuación media de las reseñas?
-- ¿Cuáles son los 5 vendedores con más ventas?
-
----
-
-## 📁 Estructura del proyecto
-
-```
-agente-sql-ia/
+📁 Estructura Arquitectónica del Proyecto
+Agente-SQL-Analisis-IA/
 ├── Data/
-│   └── raw/                  # CSVs originales de Kaggle
-├── assets/                   # Capturas de pantalla
-├── outputs/                  # CSVs y gráficos generados
+│   └── raw/                  # Archivos fuente CSV cargados desde Kaggle
+├── assets/                   # Recursos gráficos, demostraciones y capturas del sistema
+├── outputs/                  # Repositorio local de CSVs limpios descargados por el usuario
 ├── src/
-│   ├── load_data.py          # Carga CSVs a SQLite
-│   ├── agente.py             # Agente conversacional (CLI)
-│   ├── limpieza.py           # Limpieza automática con Pandas
-│   ├── visualizar.py         # Generación de gráficos con Plotly
-│   └── benchmark.py          # Benchmark de velocidad
-├── app.py                    # Interfaz web con Streamlit
-├── iniciar.bat               # Lanzador con doble clic (Windows)
-├── .env                      # API key (no se sube a GitHub)
+│   ├── load_data.py          # Script de automatización ETL: Carga CSVs raw hacia SQLite
+│   ├── limpieza.py           # Pipeline de normalización y preprocesamiento de tipos con Pandas
+│   ├── consultor_bi.py       # Módulo IA: Abstracción de reglas de negocio y traducción a DAX nativo
+│   └── benchmark.py          # Evaluador automático de latencia y tiempos de respuesta (LLM vs SQL)
+├── app.py                    # Orquestador del Dashboard principal y layouts en Streamlit
+├── iniciar.bat               # Automatismo ejecutable para entornos Windows con un doble clic
+├── .env                      # Almacén de claves privadas (Excluido en el repositorio)
 ├── .gitignore
 ├── requirements.txt
 └── README.md
-```
+👨‍💻 Autor
+David José Simón Soler - Junior Data Analyst
+(Graduado en Sociología)
 
----
-
-## 👨‍💻 Autor
-
-**David José Simón Soler**
-Sociólogo en transición a Analista de Datos
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://linkedin.com/in/tuusuario)
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white)](https://github.com/tuusuario)
