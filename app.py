@@ -6,6 +6,7 @@ import plotly.express as px
 from groq import Groq
 from dotenv import load_dotenv
 from src.limpieza import limpiar_datos
+from src.consultor_bi import generar_equivalencia_dax
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
@@ -63,11 +64,16 @@ def procesar_pregunta(pregunta):
             query = generar_query(pregunta)
             columnas, filas = ejecutar_query(query)
             df, reporte = limpiar_datos(columnas, filas)
+            
+            # Generamos los cálculos DAX correspondientes a la consulta actual
+            dax_propuesta = generar_equivalencia_dax(pregunta, query, SCHEMA)
+            
             st.session_state.historial.append({
                 "pregunta": pregunta,
                 "query": query,
                 "df": df,
-                "reporte": reporte
+                "reporte": reporte,
+                "dax": dax_propuesta
             })
             return
         except Exception:
@@ -113,21 +119,23 @@ with st.sidebar:
     st.markdown("📊 +100.000 registros")
     st.markdown("🇧🇷 Olist E-Commerce Brasil")
 
-# --- MAIN ---
-st.title("🤖 Agente SQL con IA")
-st.caption("Escribe una pregunta en español y el agente generará la query SQL, limpiará los datos y mostrará el gráfico automáticamente.")
+# --- MAIN INTERFAZ ---
+st.title("🤖 Agente SQL con IA + Consultor Power BI")
+st.caption("Escribe una pregunta en español. La IA extraerá los datos con SQL, los limpiará y te dará las medidas DAX para replicarlo en tus informes.")
 
+# Procesar si viene del selectbox de ejemplos
 if st.session_state.pregunta_ejemplo:
-    with st.spinner("Analizando..."):
+    with st.spinner("Analizando consulta y abstrayendo lógica DAX..."):
         procesar_pregunta(st.session_state.pregunta_ejemplo)
     st.session_state.pregunta_ejemplo = None
 
+# Barra de chat normal
 pregunta = st.chat_input("Escribe tu pregunta aquí...")
 if pregunta:
-    with st.spinner("Analizando..."):
+    with st.spinner("Analizando consulta y abstrayendo lógica DAX..."):
         procesar_pregunta(pregunta)
 
-# --- HISTORIAL ---
+# --- HISTORIAL VISUAL ---
 for i, item in enumerate(reversed(st.session_state.historial)):
     with st.chat_message("user"):
         st.write(item["pregunta"])
@@ -160,6 +168,12 @@ for i, item in enumerate(reversed(st.session_state.historial)):
             fig = generar_grafico(item["df"])
             if fig:
                 st.plotly_chart(fig, use_container_width=True, key=f"chart_{i}")
+        
+        # Desplegable con la equivalencia DAX sincronizada
+        if "dax" in item and item["dax"]:
+            st.markdown("---")
+            with st.expander("📊 Ver equivalente para réplica automática en Power BI"):
+                st.markdown(item["dax"])
 
 # --- BENCHMARK ---
 st.divider()
@@ -184,7 +198,7 @@ if st.button("🏁 Ejecutar benchmark"):
     with col1:
         st.dataframe(df_bench[["pregunta", "t_llm", "t_sql", "t_total"]], use_container_width=True)
     with col2:
-        fig = px.bar(
+        fig_bench = px.bar(
             df_bench,
             x="pregunta",
             y=["t_llm", "t_sql"],
@@ -193,7 +207,7 @@ if st.button("🏁 Ejecutar benchmark"):
             labels={"value": "Segundos", "variable": "Fase"},
             color_discrete_map={"t_llm": "#1f77b4", "t_sql": "#ff7f0e"}
         )
-        fig.update_xaxes(tickangle=45)
-        st.plotly_chart(fig, use_container_width=True)
+        fig_bench.update_xaxes(tickangle=45)
+        st.plotly_chart(fig_bench, use_container_width=True)
 
     status.write("✅ Benchmark completado")
